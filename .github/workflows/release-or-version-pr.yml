@@ -1,0 +1,60 @@
+name: ReleaseOrVersionPR
+
+on:
+  push:
+    branches:
+      - main
+      
+
+jobs:
+  release:
+    # Basic security: the release job can only be executed from this repo and from the main branch (not a remote thing)
+    if: ${{ github.repository == 'hyperse-io/hps' && contains('refs/heads/main',github.ref)}}
+    name: Release and changelog
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          # To run comparison we need more than the latest commit.
+          # @link https://github.com/actions/checkout#fetch-all-history-for-all-tags-and-branches
+          fetch-depth: 0
+
+      - name: Setup Rust Environment
+        uses: ./.github/actions/rust-setup
+
+      - name: Setup Node.js Environment
+        uses: ./.github/actions/node-env
+
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/yarn-nm-install
+
+      - name: Build hps-srv-rspack-plugin-import
+        uses: ./.github/actions/rust-build
+        with:
+          working-directory: crates/hps-srv-rspack-plugin-import
+          build-command: yarn build
+          clean-command: yarn clean
+
+      # @link https://github.com/changesets/action
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: yarn g:release
+          cwd: ${{ github.workspace }}
+          title: '[Release] Version packages'
+          # Optional, might be used in conjunction with GITHUB_TOKEN to
+          # allow running the workflows on a Version package action.
+          # Be aware of security implications.
+          # setupGitUser: true
+        env:
+          # See https://github.com/changesets/action/issues/147
+          HOME: ${{ github.workspace }}
+          # Allows to download / query / comment packages
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Allows to publish packages
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # Support cargo
+          CARGO_TERM_COLOR: always
+          RUST_BACKTRACE: 1

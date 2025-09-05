@@ -1,0 +1,11 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "@hyperse/hps-code-checker-rspack-plugin": "0.0.1",
+    "@hyperse/hps-code-checker-webpack-plugin": "0.0.1"
+  },
+  "changesets": [
+   
+  ]
+}
