@@ -116,9 +116,7 @@ jobs:
           echo "🔨 Releasing npm binding packages... ${{ steps.napi-info.outputs.binding-directory }}"
           npm config set access public
           npm config set provenance true
-          yarn publish:rust
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          yarn g:publish:rust
 
       - name: Build release packages
         run: |
