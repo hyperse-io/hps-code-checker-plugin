@@ -116,11 +116,7 @@ jobs:
           echo "🔨 Releasing npm binding packages... ${{ steps.napi-info.outputs.binding-directory }}"
           npm config set access public
           npm config set provenance true
-          npm config set workspaces false
-          yarn publish:rust
-        env:
-          # Disable npm workspaces to avoid ENOWORKSPACES when publishing from a workspace package
-          NPM_CONFIG_WORKSPACES: false
+          npx napi pre-publish --no-gh-release -t npm
 
       - name: Build release packages
         run: |
