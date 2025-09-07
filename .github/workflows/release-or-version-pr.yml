@@ -113,8 +113,9 @@ jobs:
       - name: Release npm binding packages
         run: |
           echo "🔨 Releasing npm binding packages... ${{ steps.napi-info.outputs.binding-directory }}"
-          yarn config set npmAccess public
-          yarn napi pre-publish --no-gh-release -t npm ${{ inputs.dry-run && '--dry-run' || '' }}
+          npm config set access public
+          npm config set provenance true
+          yarn publish:rust
         working-directory: ${{ steps.napi-info.outputs.binding-directory }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
