@@ -1,30 +1,36 @@
 [package]
-
-description = "HPS SWC plugin for modular import"
-
-authors      = { workspace = true }
-edition      = { workspace = true }
-homepage     = { workspace = true }
-license      = { workspace = true }
-name         = "hps_srv_rspack_plugin_import"
-publish      = false
-repository   = { workspace = true }
-rust-version = { workspace = true }
-version      = "1.0.0"
-
+edition.workspace = true
+name              = "binding"
+publish           = false
 
 [lib]
-crate-type = ["cdylib", "rlib"]
+crate-type = ["cdylib"]
 
 [dependencies]
-modularize_imports = { path = "./transform" }
-serde              = { workspace = true }
-serde_json         = { workspace = true }
-swc_common         = { workspace = true, features = ["concurrent"] }
-swc_core           = { workspace = true, features = ["ecma_plugin_transform"] }
-swc_ecma_ast       = { workspace = true }
-swc_ecma_utils     = { workspace = true }
-swc_ecma_visit     = { workspace = true }
-swc_plugin_macro   = { workspace = true }
-tracing            = { workspace = true, features = ["release_max_level_off"] }
+rspack_binding_builder        = { workspace = true }
+rspack_binding_builder_macros = { workspace = true }
 
+rspack_cacheable   = { workspace = true }
+rspack_collections = { workspace = true }
+rspack_core        = { workspace = true }
+rspack_error       = { workspace = true }
+rspack_hook        = { workspace = true }
+rspack_sources     = { workspace = true }
+
+async-trait = { workspace = true }
+
+napi        = { workspace = true, features = ["async", "tokio_rt", "serde-json", "anyhow", "napi7", "compat-mode"] }
+napi-derive = { workspace = true, features = ["compat-mode"] }
+
+serde        = { workspace = true }
+serde_json   = { workspace = true }
+regex        = { workspace = true }
+lazy_static  = { workspace = true }
+
+# Enable SWC plugin feature for targets that support it
+# Skip: wasm32-wasip1-threads, i686-pc-windows-msvc, aarch64-pc-windows-msvc, armv7-linux-androideabi, armv7-unknown-linux-gnueabihf
+[target.'cfg(not(any(target_arch = "wasm32", target_arch = "arm", all(target_os = "windows", target_arch = "x86"), all(target_os = "windows", target_arch = "aarch64"))))'.dependencies]
+rspack_binding_builder = { workspace = true, features = ["plugin"] }
+
+[build-dependencies]
+rspack_binding_build = { workspace = true }

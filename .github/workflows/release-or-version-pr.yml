@@ -1,24 +1,68 @@
-name: ReleaseOrVersionPR
+name: Release
 
 on:
   push:
     branches:
       - main
-      
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Run in dry-run mode (no actual publishing)'
+        required: false
+        default: false
+        type: boolean
+      npm-tag:
+        description: 'NPM tag for publishing'
+        required: false
+        default: 'latest'
+        type: choice
+        options:
+          - latest
+          - alpha
+          - beta
+          - canary
+
+env:
+  DEBUG: napi:*
+  # Support cargo
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
 
 jobs:
+  build:
+    name: Build
+    uses: rspack-contrib/rspack-toolchain/.github/workflows/build.yml@v1
+    with:
+      napi-build-command: yarn g:build-rust
+
   release:
     # Basic security: the release job can only be executed from this repo and from the main branch (not a remote thing)
-    if: ${{ github.repository == 'hyperse-io/hps' && contains('refs/heads/main',github.ref)}}
-    name: Release and changelog
+    if: ${{ github.repository == 'hyperse-io/hps-code-checker-plugin' && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch') }}
     runs-on: ubuntu-latest
+    name: Release
+    permissions:
+      contents: write
+      id-token: write
+    needs: [build]
+
     steps:
-      - name: Checkout Repo
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           # To run comparison we need more than the latest commit.
           # @link https://github.com/actions/checkout#fetch-all-history-for-all-tags-and-branches
           fetch-depth: 0
+
+      - name: Display release mode
+        run: |
+          echo "🚀 Release Configuration:"
+          echo "  - Dry-run mode: ${{ inputs.dry-run }}"
+          echo "  - NPM tag: ${{ inputs.npm-tag || 'latest' }}"
+          if [ "${{ inputs.dry-run }}" == "true" ]; then
+            echo "  - ⚠️  This is a DRY RUN - no packages will be published"
+          else
+            echo "  - 📦 This will PUBLISH packages to npm"
+          fi
 
       - name: Setup Rust Environment
         uses: ./.github/actions/rust-setup
@@ -26,28 +70,67 @@ jobs:
       - name: Setup Node.js Environment
         uses: ./.github/actions/node-env
 
+      - name: Setup Yarn
+        run: corepack prepare
+
       - name: 📥 Monorepo install
         uses: ./.github/actions/yarn-nm-install
 
-      - name: Build hps-srv-rspack-plugin-import
-        uses: ./.github/actions/rust-build
-        with:
-          working-directory: crates/hps-srv-rspack-plugin-import
-          build-command: yarn build
-          clean-command: yarn clean
+      - name: Get NAPI info
+        id: napi-info
+        uses: rspack-contrib/rspack-toolchain/get-napi-info@v1
 
-      # @link https://github.com/changesets/action
-      - name: Create Release Pull Request or Publish to npm
-        id: changesets
-        uses: changesets/action@v1
+      - name: Download rspack binding
+        uses: rspack-contrib/rspack-toolchain/download-rspack-binding@v1
         with:
-          publish: yarn g:release
-          cwd: ${{ github.workspace }}
-          title: '[Release] Version packages'
-          # Optional, might be used in conjunction with GITHUB_TOKEN to
-          # allow running the workflows on a Version package action.
-          # Be aware of security implications.
-          # setupGitUser: true
+          path: ${{ steps.napi-info.outputs.binding-directory }}/artifacts
+
+      - name: List artifacts
+        run: ls -R artifacts
+        working-directory: ${{ steps.napi-info.outputs.binding-directory }}
+
+      - name: Create npm dirs
+        run: yarn napi create-npm-dirs
+        working-directory: ${{ steps.napi-info.outputs.binding-directory }}
+
+      - name: Move artifacts
+        run: yarn napi artifacts
+        working-directory: ${{ steps.napi-info.outputs.binding-directory }}
+
+      - name: List npm dirs
+        run: ls -R npm
+        working-directory: ${{ steps.napi-info.outputs.binding-directory }}
+
+      - name: Create npm token
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Release npm binding packages
+        run: |
+          npm config set access public
+          npm config set provenance true
+          yarn napi pre-publish --no-gh-release -t npm ${{ inputs.dry-run && '--dry-run' || '' }}
+        working-directory: ${{ steps.napi-info.outputs.binding-directory }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build release packages
+        run: |
+          echo "🔨 Building release packages..."
+          yarn g:build-release
+
+      - name: Release npm packages with changeset
+        run: |
+          echo "📦 Publishing packages with changeset..."
+          if [ "${{ inputs.dry-run }}" == "true" ]; then
+            echo "🧪 DRY RUN: Would publish packages with tag ${{ inputs.npm-tag }}"
+            yarn changeset publish --dry-run
+          else
+            echo "🚀 Publishing packages with tag ${{ inputs.npm-tag }}"
+            yarn changeset publish --tag ${{ inputs.npm-tag }}
+          fi
         env:
           # See https://github.com/changesets/action/issues/147
           HOME: ${{ github.workspace }}

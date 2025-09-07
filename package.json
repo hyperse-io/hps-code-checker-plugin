@@ -29,13 +29,15 @@
   "workspaces": [
     "website",
     "packages/*",
-    "crates/*"
+    "crates/*",
+    "examples/*"
   ],
   "scripts": {
     "g:clean": "yarn clean:global-cache && yarn workspaces foreach -At run clean",
     "g:build": "yarn g:build-release",
     "?build-release": "When https://github.com/atlassian/changesets/issues/432 has a solution we can remove this trick",
     "g:build-release": "yarn workspaces foreach -At run build-release",
+    "g:build-rust": "yarn workspace @hyperse/hps-code-checker-rust run build",
     "g:build-local": "yarn workspaces foreach -At run build",
     "g:test": "yarn workspaces foreach -At run test",
     "g:test-unit": "yarn workspaces foreach --all -ptv run test-unit",
@@ -64,6 +66,7 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@hyperse/eslint-config-hyperse": "^1.4.7",
+    "@hyperse/ts-node": "^1.0.3",
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^9.34.0",
