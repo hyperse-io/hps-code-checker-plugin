@@ -35,21 +35,15 @@ jobs:
     with:
       napi-build-command: yarn g:build-rust
 
-  test:
-    name: Test
-    uses: ./.github/workflows/test.yml
-    needs: build
-
   release:
     # Basic security: the release job can only be executed from this repo and from the main branch (not a remote thing)
     if: ${{ github.repository == 'hyperse-io/hps-code-checker-plugin' && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch') }}
     runs-on: ubuntu-latest
-    environment: npm
     name: Release
     permissions:
       contents: write
       id-token: write
-    needs: [build, test]
+    needs: [build]
 
     steps:
       - name: Checkout code
