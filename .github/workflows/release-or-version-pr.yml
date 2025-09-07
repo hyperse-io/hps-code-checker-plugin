@@ -79,6 +79,8 @@ jobs:
       - name: Get NAPI info
         id: napi-info
         uses: rspack-contrib/rspack-toolchain/get-napi-info@v1
+        with:
+          package-json-path: crates/hps-code-checker-rust/package.json
 
       - name: Download rspack binding
         uses: rspack-contrib/rspack-toolchain/download-rspack-binding@v1
@@ -138,6 +140,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Allows to publish packages
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # Allows to publish packages
+          BINDING_DIR: ${{ secrets.CHANGESET_TOKEN }}
           # Support cargo
           CARGO_TERM_COLOR: always
           RUST_BACKTRACE: 1
