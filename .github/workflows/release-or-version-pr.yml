@@ -80,7 +80,7 @@ jobs:
         id: napi-info
         uses: rspack-contrib/rspack-toolchain/get-napi-info@v1
         with:
-          package-json-path: crates/hps-code-checker-rust/package.json
+          package-json-path: 'crates/hps-code-checker-rust/package.json'
 
       - name: Download rspack binding
         uses: rspack-contrib/rspack-toolchain/download-rspack-binding@v1
