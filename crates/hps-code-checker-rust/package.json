@@ -66,6 +66,7 @@
     ]
   },
   "preferUnplugged": true,
+  "packageManager": "yarn@4.9.4",
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=8.0.0"
