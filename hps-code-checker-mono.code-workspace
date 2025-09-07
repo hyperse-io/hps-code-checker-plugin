@@ -13,6 +13,14 @@
       "path": "packages/hps-code-checker-rspack-plugin",
     },
     {
+      "name": "hps-code-checker-rust",
+      "path": "crates/hps-code-checker-rust",
+    },
+    {
+      "name": "example-rspack",
+      "path": "examples/example-rspack",
+    },
+    {
       "name": "root",
       "path": ".",
     },
@@ -68,6 +76,8 @@
       "./website",
       "./packages/hps-code-checker-webpack-plugin",
       "./packages/hps-code-checker-rspack-plugin",
+      "./crates/hps-code-checker-rust",
+      "./examples/example-rspack",
     ],
     "typescript.tsdk": "root/node_modules/typescript/lib"
   },

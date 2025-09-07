@@ -7,5 +7,6 @@ export default defineConfig({
     globals: true,
     exclude: [...configDefaults.exclude],
     include: ['**/?(*.){test,spec}.?(c|m)[jt]s?(x)'],
+    reporters: [['verbose', { summary: true }]],
   },
 });
