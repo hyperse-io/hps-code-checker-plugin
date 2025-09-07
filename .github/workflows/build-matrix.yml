@@ -1,0 +1,120 @@
+name: Build Matrix (Yarn)
+
+on:
+  workflow_call:
+    inputs:
+      package-json-path:
+        description: 'Path to binding `package.json`. Same as `--package-json-path` in `@napi-rs/cli build`.'
+        required: false
+        default: 'crates/binding/package.json'
+        type: string
+      napi-build-command:
+        description: 'Command to call `napi build`. The directory of the package.json file is the working directory of the command.'
+        required: false
+        default: 'yarn build'
+        type: string
+
+env:
+  DEBUG: napi:*
+  MACOSX_DEPLOYMENT_TARGET: '10.13'
+  CARGO_INCREMENTAL: '1'
+
+jobs:
+  get-napi-info:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.napi-info.outputs.matrix }}
+      binding-directory: ${{ steps.napi-info.outputs.binding-directory }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get NAPI Info
+        id: napi-info
+        uses: rspack-contrib/rspack-toolchain/get-napi-info@v1
+        with:
+          package-json-path: ${{ inputs.package-json-path }}
+          napi-build-command: ${{ inputs.napi-build-command }}
+
+  build:
+    needs: get-napi-info
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.get-napi-info.outputs.matrix) }}
+    name: build - ${{ matrix.settings.target }}
+    runs-on: ${{ matrix.settings.host }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: yarn
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup node x86
+        if: matrix.settings.target == 'i686-pc-windows-msvc'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          architecture: x86
+          cache: yarn
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.settings.target }}
+
+      - name: Install additional Rust target
+        run: rustup target add ${{ matrix.settings.target }}
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.settings.target }}
+          cache-directories: |
+            ~/.napi-rs
+            .cargo-cache
+
+      - name: Setup Zig for musl builds
+        if: ${{ contains(matrix.settings.target, 'musl') }}
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.13.0
+
+      - name: Install cargo-zigbuild
+        if: ${{ contains(matrix.settings.target, 'musl') }}
+        uses: taiki-e/install-action@v2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          tool: cargo-zigbuild
+
+      - name: Install cross
+        if: ${{ matrix.settings.target == 'aarch64-unknown-linux-gnu' || matrix.settings.target == 'armv7-unknown-linux-gnueabihf' }}
+        run: cargo install cross --git https://github.com/cross-rs/cross
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build
+        run: ${{ matrix.settings.build }}
+        working-directory: ${{ needs.get-napi-info.outputs.binding-directory }}
+        shell: bash
+
+      - name: Upload artifact (node files)
+        if: ${{ matrix.settings.target != 'wasm32-wasip1-threads' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bindings-${{ matrix.settings.target }}
+          path: '${{ needs.get-napi-info.outputs.binding-directory }}/*.node'
+          if-no-files-found: error
+
+      # - name: Upload artifact (wasm files)
+      #   if: ${{ matrix.settings.target == 'wasm32-wasip1-threads' }}
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: bindings-${{ matrix.settings.target }}
+      #     path: '${{ needs.get-napi-info.outputs.binding-directory }}/*.wasm'
+      #     if-no-files-found: error

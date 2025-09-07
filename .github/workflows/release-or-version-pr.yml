@@ -32,7 +32,7 @@ env:
 jobs:
   build:
     name: Build
-    uses: ./.github/actions/rust-build
+    uses: ./.github/workflows/build-matrix.yml
     with:
       package-json-path: crates/hps-code-checker-rust/package.json
       napi-build-command: yarn g:build-rust
