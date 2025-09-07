@@ -69,7 +69,10 @@ jobs:
         uses: ./.github/actions/rust-setup
 
       - name: Setup Node.js Environment
-        uses: ./.github/actions/node-env
+        uses: ./.github/actions/node-
+
+      - name: Enable corepack
+        run: corepack enable
 
       - name: Setup Yarn
         run: corepack prepare
@@ -114,9 +117,10 @@ jobs:
         working-directory: ${{ steps.napi-info.outputs.binding-directory }}
         run: |
           echo "🔨 Releasing npm binding packages... ${{ steps.napi-info.outputs.binding-directory }}"
+          ls -R ${{ steps.napi-info.outputs.binding-directory }}
           npm config set access public
           npm config set provenance true
-          NPM_CONFIG_WORKSPACES=false npx napi pre-publish --no-gh-release -t npm --npm-dir ${{ steps.napi-info.outputs.binding-directory }}
+          yarn napi pre-publish --no-gh-release -t npm
 
       - name: Build release packages
         run: |
@@ -126,13 +130,7 @@ jobs:
       - name: Release npm packages with changeset
         run: |
           echo "📦 Publishing packages with changeset..."
-          if [ "${{ inputs.dry-run }}" == "true" ]; then
-            echo "🧪 DRY RUN: Would publish packages with tag ${{ inputs.npm-tag }}"
-            yarn changeset publish --dry-run
-          else
-            echo "🚀 Publishing packages with tag ${{ inputs.npm-tag }}"
-            yarn changeset publish --tag ${{ inputs.npm-tag }}
-          fi
+          yarn g:changeset
         env:
           # See https://github.com/changesets/action/issues/147
           HOME: ${{ github.workspace }}
