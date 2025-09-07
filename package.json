@@ -29,7 +29,6 @@
   "workspaces": [
     "website",
     "packages/*",
-    "crates/*",
     "examples/*"
   ],
   "scripts": {
