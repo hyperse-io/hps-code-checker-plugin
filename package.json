@@ -50,7 +50,7 @@
     "g:changeset": "changeset",
     "g:version": "changeset version",
     "g:release": "yarn g:build-release && changeset publish",
-    "g:publish:rust": "npx napi pre-publish --no-gh-release -t npm --cwd crates/hps-code-checker-rust",
+    "g:publish:rust": "yarn workspace @hyperse/hps-code-checker-rust run publish:rust",
     "clean:global-cache": "rimraf --no-glob ./dist ./coverage ./__data__ ./config/__data__ ./_release ./tsconfig.tsbuildinfo",
     "g:cz": "cz",
     "g:publish-local": "yarn changeset version && cd scripts && ./publish-to-verdaccio.sh",
