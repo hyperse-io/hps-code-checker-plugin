@@ -31,7 +31,7 @@ env:
 jobs:
   build:
     name: Build
-    uses: rspack-contrib/rspack-toolchain/.github/workflows/build.yml@v1
+    uses: ./.github/workflows/build-matrix.yml
     with:
       package-json-path: crates/hps-code-checker-rust/package.json
       napi-build-command: yarn g:build-rust
@@ -47,6 +47,12 @@ jobs:
     needs: [build]
 
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
