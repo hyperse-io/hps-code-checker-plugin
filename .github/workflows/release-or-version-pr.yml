@@ -3,7 +3,8 @@ name: Release
 on:
   push:
     branches:
-      - main
+      # - main
+      - feat/plugin
   workflow_dispatch:
     inputs:
       dry-run:
@@ -38,7 +39,7 @@ jobs:
 
   release:
     # Basic security: the release job can only be executed from this repo and from the main branch (not a remote thing)
-    if: ${{ github.repository == 'hyperse-io/hps-code-checker-plugin' && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch') }}
+    # if: ${{ github.repository == 'hyperse-io/hps-code-checker-plugin' && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch') }}
     runs-on: ubuntu-latest
     name: Release
     permissions:
