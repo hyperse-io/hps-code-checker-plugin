@@ -1,6 +1,6 @@
 [package]
 edition.workspace = true
-name              = "binding"
+name              = "hps-code-checker-rust"
 publish           = false
 
 [lib]
