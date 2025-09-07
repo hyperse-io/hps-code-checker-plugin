@@ -22,12 +22,6 @@ on:
           - beta
           - canary
 
-env:
-  DEBUG: napi:*
-  # Support cargo
-  CARGO_TERM_COLOR: always
-  RUST_BACKTRACE: 1
-
 jobs:
   build:
     name: Build
@@ -150,5 +144,6 @@ jobs:
           # Allows to publish packages
           BINDING_DIR: ${{ secrets.CHANGESET_TOKEN }}
           # Support cargo
+          DEBUG: napi:*
           CARGO_TERM_COLOR: always
           RUST_BACKTRACE: 1
