@@ -35,7 +35,7 @@
     "test-watch": "vitest watch --ui",
     "fix-all-files": "eslint . --fix",
     "typecheck": "tsc --project ./tsconfig.json --noEmit",
-    "publish:rust": "npx napi pre-publish --no-gh-release -t npm"
+    "prepublishOnly": "npx napi pre-publish -t npm"
   },
   "devDependencies": {
     "@hyperse/eslint-config-hyperse": "^1.4.8",

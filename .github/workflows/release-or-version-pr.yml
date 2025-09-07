@@ -116,7 +116,7 @@ jobs:
           echo "🔨 Releasing npm binding packages... ${{ steps.napi-info.outputs.binding-directory }}"
           npm config set access public
           npm config set provenance true
-          npx napi pre-publish --no-gh-release -t npm
+          npx napi pre-publish --no-gh-release -t npm --npm-dir ${{ steps.napi-info.outputs.binding-directory }}
 
       - name: Build release packages
         run: |
