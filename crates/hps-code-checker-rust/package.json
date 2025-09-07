@@ -63,8 +63,5 @@
   "publishConfig": {
     "access": "public",
     "directory": "_release/package"
-  },
-  "optionalDependencies": {
-    "@hyperse/hps-code-checker-rust-darwin-arm64": "0.0.1"
   }
 }
