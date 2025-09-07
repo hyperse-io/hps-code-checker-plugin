@@ -35,7 +35,7 @@
     "test-watch": "vitest watch --ui",
     "fix-all-files": "eslint . --fix",
     "typecheck": "tsc --project ./tsconfig.json --noEmit",
-    "publish:rust": "npx napi pre-publish --no-gh-release -t npm --cwd ./crates/hps-code-checker-rust"
+    "publish:rust": "npx napi pre-publish --no-gh-release -t npm"
   },
   "devDependencies": {
     "@hyperse/eslint-config-hyperse": "^1.4.8",
@@ -63,5 +63,8 @@
   "publishConfig": {
     "access": "public",
     "directory": "_release/package"
+  },
+  "optionalDependencies": {
+    "@hyperse/hps-code-checker-rust-darwin-arm64": "0.0.1"
   }
 }
