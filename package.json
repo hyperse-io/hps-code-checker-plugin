@@ -40,8 +40,8 @@
   ],
   "scripts": {
     "prepare": "husky",
-    "build": "rimraf dist && tsc -p ./tsconfig.build.json",
-    "build:rust": "pnpm run --filter @hyperse/hps-code-checker-rust build",
+    "build:tsc": "rimraf dist && tsc -p ./tsconfig.build.json",
+    "build": "pnpm run --filter @hyperse/hps-code-checker-rust build",
     "lint": "pnpm run lint",
     "typecheck": "pnpm run typecheck",
     "lint-staged": "lint-staged --allow-empty"
