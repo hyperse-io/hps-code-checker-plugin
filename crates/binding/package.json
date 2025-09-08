@@ -1,7 +1,7 @@
 {
   "name": "@hyperse/hps-code-checker-rust",
   "homepage": "https://github.com/hyperse-io/hps-code-checker-plugin",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/hyperse-io/hps-code-checker-plugin",
@@ -11,7 +11,7 @@
     "name": "Hyperse",
     "url": "https://github.com/hyperse-io"
   },
-  "type": "commonjs",
+  "type": "module",
   "license": "SEE LICENSE IN FILE 'LICENSE'",
   "files": [
     "index.js",
@@ -28,7 +28,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "napi build --platform",
+    "build": "napi build --platform --esm",
     "clean": "rimraf --no-glob ./dist  ./node_modules ./coverage ./__data__ ./config/__data__ ./_release ./tsconfig.tsbuildinfo",
     "test": "yarn build && run-s test-unit",
     "test-task": "vitest run",

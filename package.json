@@ -1,6 +1,6 @@
 {
   "name": "@hyperse/hps-code-checker-rspack-plugin",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "description": "The HPS Code Checker Plugin.",
   "keywords": [
     "hyperse",
@@ -39,6 +39,7 @@
   ],
   "scripts": {
     "prepare": "husky",
+    "clean:rust": "rimraf crates/binding/npm",
     "build:tsc": "rimraf dist && tsc -p ./tsconfig.build.json",
     "build": "pnpm run --filter @hyperse/hps-code-checker-rust build",
     "lint": "pnpm run lint",
