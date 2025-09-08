@@ -108,7 +108,6 @@ impl RspackCodeCheckerPlugin {
 
   /// Check code for illegal patterns using regex and collect errors
   fn check_code(&self, code: &str, module_name: &str) {
-    print!("Checking code: {}\n", code);
     // If the string is a domain, check if it's in allowed_domain_resources
     // If not allowed, report error and skip further checks
     let mut un_allowed = false;
