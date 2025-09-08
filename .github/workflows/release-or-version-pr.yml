@@ -118,7 +118,6 @@ jobs:
         working-directory: ${{ steps.napi-info.outputs.binding-directory }}
         run: |
           echo "🔨 Releasing npm binding packages... ${{ steps.napi-info.outputs.binding-directory }}"
-          ls -R /
           pwd
           ls -R ${{ steps.napi-info.outputs.binding-directory }}
           ls -R ${{ steps.napi-info.outputs.binding-directory }}/npm
