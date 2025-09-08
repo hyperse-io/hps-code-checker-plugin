@@ -1,6 +1,6 @@
 {
   "name": "@hyperse/hps-code-checker-rspack-plugin",
-  "version": "0.0.1",
+  "version": "1.0.0-alpha.0",
   "private": true,
   "description": "The HPS Code Checker Plugin.",
   "keywords": [
@@ -52,7 +52,7 @@
     }
   },
   "dependencies": {
-    "@rspack/core": "1.5.0",
+    "@rspack/core": "1.5.2",
     "@hyperse/hps-code-checker-rust": "workspace:*"
   },
   "devDependencies": {
