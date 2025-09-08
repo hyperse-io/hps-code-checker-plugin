@@ -4,7 +4,8 @@
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
-    "source.organizeImports": "never"
+    "source.organizeImports": "never",
+    "source.removeUnusedImports": "explicit"
   },
   // Disable vscode formatting for js,jsx,ts,tsx files
   // to allow dbaeumer.vscode-eslint to format them

@@ -242,28 +242,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "binding"
-version = "0.0.0"
-dependencies = [
- "async-trait",
- "lazy_static",
- "napi",
- "napi-derive",
- "regex",
- "rspack_binding_build",
- "rspack_binding_builder",
- "rspack_binding_builder_macros",
- "rspack_cacheable",
- "rspack_collections",
- "rspack_core",
- "rspack_error",
- "rspack_hook",
- "rspack_sources",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "bit-set"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1547,6 +1525,28 @@ name = "hex"
 version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
+
+[[package]]
+name = "hps-code-checker-rust"
+version = "0.0.0"
+dependencies = [
+ "async-trait",
+ "lazy_static",
+ "napi",
+ "napi-derive",
+ "regex",
+ "rspack_binding_build",
+ "rspack_binding_builder",
+ "rspack_binding_builder_macros",
+ "rspack_cacheable",
+ "rspack_collections",
+ "rspack_core",
+ "rspack_error",
+ "rspack_hook",
+ "rspack_sources",
+ "serde",
+ "serde_json",
+]
 
 [[package]]
 name = "hstr"

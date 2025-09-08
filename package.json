@@ -1,5 +1,5 @@
 {
-  "name": "hyperse-hps-code-checker-plugin",
+  "name": "@hyperse/hps-code-checker-rspack-plugin",
   "version": "0.0.1",
   "private": true,
   "description": "The HPS Code Checker Plugin.",
@@ -26,39 +26,34 @@
     "url": "https://github.com/hyperse-net"
   },
   "type": "module",
-  "workspaces": [
-    "website",
-    "packages/*",
-    "crates/*",
-    "examples/*"
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "index.js"
   ],
   "scripts": {
-    "g:clean": "yarn clean:global-cache && yarn workspaces foreach -At run clean",
-    "g:build": "yarn g:build-release",
-    "?build-release": "When https://github.com/atlassian/changesets/issues/432 has a solution we can remove this trick",
-    "g:build-release": "yarn workspaces foreach -At run build-release",
-    "g:build-rust": "yarn workspace @hyperse/hps-code-checker-rust run build",
-    "g:build-local": "yarn workspaces foreach -At run build",
-    "g:test": "yarn workspaces foreach -At run test",
-    "g:test-unit": "yarn workspaces foreach --all -ptv run test-unit",
-    "g:test-e2e": "yarn workspaces foreach -At run test-e2e",
-    "g:test-coverage": "yarn workspaces foreach -At run test-coverage",
-    "g:lint": "yarn workspaces foreach -At run lint",
-    "g:typecheck": "yarn workspaces foreach -At run typecheck",
-    "g:lint-staged-files": "lint-staged --allow-empty",
-    "g:fix-all-files": "yarn workspaces foreach -At run fix-all-files",
-    "g:changeset": "changeset",
-    "g:version": "changeset version",
-    "g:release": "yarn g:build-release && changeset publish",
-    "clean:global-cache": "rimraf --no-glob ./dist ./coverage ./__data__ ./config/__data__ ./_release ./tsconfig.tsbuildinfo",
-    "g:cz": "cz",
-    "g:publish-local": "yarn changeset version && cd scripts && ./publish-to-verdaccio.sh",
-    "prepare": "yarn husky"
+    "prepare": "husky",
+    "build": "rimraf dist && tsc -p ./tsconfig.build.json",
+    "build:rust": "pnpm run --filter @hyperse/hps-code-checker-rust build",
+    "lint": "pnpm run lint",
+    "typecheck": "pnpm run typecheck",
+    "lint-staged": "lint-staged --allow-empty"
   },
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "@rspack/core": "1.5.0",
+    "@hyperse/hps-code-checker-rust": "workspace:*"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.1",
@@ -68,6 +63,11 @@
     "@hyperse/eslint-config-hyperse": "^1.4.7",
     "@hyperse/ts-node": "^1.0.3",
     "@napi-rs/cli": "^3.0.1",
+    "@types/node": "^24.3.0",
+    "vite-tsconfig-paths": "^5.1.4",
+    "@vitest/coverage-istanbul": "^3.2.4",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "@vitest/ui": "^3.2.4",
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^9.34.0",
@@ -75,12 +75,16 @@
     "lint-staged": "^16.1.5",
     "npm-run-all": "^4.1.5",
     "rimraf": "^6.0.1",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   },
-  "packageManager": "yarn@4.9.4",
+  "packageManager": "pnpm@10.15.0",
   "engines": {
     "node": ">=20.0.0",
     "npm": "please-use-yarn",
     "yarn": ">=1.22.0"
+  },
+  "lint-staged": {
+    "*.toml": "npx taplo format"
   }
 }
