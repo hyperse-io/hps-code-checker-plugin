@@ -1,9 +1,6 @@
-name: ReleaseOrVersionPR
+name: Release
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       dry-run:
@@ -39,7 +36,6 @@ jobs:
 
   release:
     # Basic security: the release job can only be executed from this repo and from the main branch (not a remote thing)
-    if: ${{ github.repository == 'hyperse-io/hps-code-checker-plugin' && contains('refs/heads/main',github.ref)}}
     runs-on: ubuntu-latest
     environment: npm
     name: Release
@@ -134,7 +130,6 @@ jobs:
 
       - name: Release npm packages
         run: |
-          pnpm run clean:rust
           pnpm run build:tsc
           pnpm publish -r --tag ${{ inputs.npm-tag }} --no-git-checks --provenance --access public ${{ inputs.dry-run && '--dry-run' || '' }}
         env:
