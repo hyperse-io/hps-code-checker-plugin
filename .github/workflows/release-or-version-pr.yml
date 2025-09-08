@@ -85,7 +85,7 @@ jobs:
         id: napi-info
         uses: rspack-contrib/rspack-toolchain/get-napi-info@v1
         with:
-          package-json-path: crates/hps-code-checker-rust/package.json
+          package-json-path: ./crates/hps-code-checker-rust/package.json
 
       - name: Download rspack binding
         uses: rspack-contrib/rspack-toolchain/download-rspack-binding@v1
@@ -119,8 +119,11 @@ jobs:
         run: |
           echo "🔨 Releasing npm binding packages... ${{ steps.napi-info.outputs.binding-directory }}"
           pwd
+          echo "==============》》》》》》"
           ls -R ${{ steps.napi-info.outputs.binding-directory }}
+          echo "==============》》》》》》"
           ls -R ${{ steps.napi-info.outputs.binding-directory }}/npm
+          echo "==============》》》》》》"
           npm config set access public
           npm config set provenance true
           yarn napi pre-publish --no-gh-release -t npm
