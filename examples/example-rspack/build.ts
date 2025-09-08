@@ -99,4 +99,9 @@ export const createRspack = async () => {
   });
 };
 
-await createRspack();
+try {
+  await createRspack();
+} catch (error) {
+  console.log('error message\n');
+  console.error(error);
+}
