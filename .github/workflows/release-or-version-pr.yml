@@ -1,4 +1,4 @@
-name: Release
+name: ReleaseOrVersionPR
 
 on:
   push:
@@ -22,37 +22,35 @@ on:
           - beta
           - canary
 
+env:
+  DEBUG: napi:*
+
 jobs:
   build:
     name: Build
-    uses: ./.github/workflows/build-matrix.yml
+    uses: rspack-contrib/rspack-toolchain/.github/workflows/build.yml@v1
     with:
-      package-json-path: crates/hps-code-checker-rust/package.json
-      napi-build-command: yarn g:build-rust
+      napi-build-command: pnpm build --release
+
+  test:
+    name: Test
+    uses: ./.github/workflows/ci-test.yml
+    needs: build
 
   release:
     # Basic security: the release job can only be executed from this repo and from the main branch (not a remote thing)
-    if: ${{ github.repository == 'hyperse-io/hps-code-checker-plugin' && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch') }}
+    if: ${{ github.repository == 'hyperse-io/hps-code-checker-rspack-plugin' && contains('refs/heads/main',github.ref)}}
     runs-on: ubuntu-latest
+    environment: npm
     name: Release
     permissions:
       contents: write
       id-token: write
-    needs: [build]
+    needs: [build, test]
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: yarn
-
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          # To run comparison we need more than the latest commit.
-          # @link https://github.com/actions/checkout#fetch-all-history-for-all-tags-and-branches
-          fetch-depth: 0
 
       - name: Display release mode
         run: |
@@ -65,26 +63,31 @@ jobs:
             echo "  - 📦 This will PUBLISH packages to npm"
           fi
 
-      - name: Setup Rust Environment
-        uses: ./.github/actions/rust-setup
-
-      - name: Setup Node.js Environment
-        uses: ./.github/actions/node-
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
 
       - name: Enable corepack
         run: corepack enable
 
-      - name: Setup Yarn
+      - name: Setup pnpm
         run: corepack prepare
 
-      - name: 📥 Monorepo install
-        uses: ./.github/actions/yarn-nm-install
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Get NAPI info
         id: napi-info
         uses: rspack-contrib/rspack-toolchain/get-napi-info@v1
-        with:
-          package-json-path: crates/hps-code-checker-rust/package.json
 
       - name: Download rspack binding
         uses: rspack-contrib/rspack-toolchain/download-rspack-binding@v1
@@ -96,11 +99,11 @@ jobs:
         working-directory: ${{ steps.napi-info.outputs.binding-directory }}
 
       - name: Create npm dirs
-        run: yarn napi create-npm-dirs
+        run: pnpm napi create-npm-dirs
         working-directory: ${{ steps.napi-info.outputs.binding-directory }}
 
       - name: Move artifacts
-        run: yarn napi artifacts
+        run: pnpm napi artifacts
         working-directory: ${{ steps.napi-info.outputs.binding-directory }}
 
       - name: List npm dirs
@@ -114,33 +117,17 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Release npm binding packages
-        working-directory: ${{ steps.napi-info.outputs.binding-directory }}
         run: |
-          echo "🔨 Releasing npm binding packages... ${{ steps.napi-info.outputs.binding-directory }}"
-          ls -R ${{ steps.napi-info.outputs.binding-directory }}
           npm config set access public
           npm config set provenance true
-          yarn napi pre-publish --no-gh-release -t npm
-
-      - name: Build release packages
-        run: |
-          echo "🔨 Building release packages..."
-          yarn g:build-release
-
-      - name: Release npm packages with changeset
-        run: |
-          echo "📦 Publishing packages with changeset..."
-          yarn g:changeset
+          pnpm napi pre-publish --no-gh-release -t npm ${{ inputs.dry-run && '--dry-run' || '' }}
+        working-directory: ${{ steps.napi-info.outputs.binding-directory }}
         env:
-          # See https://github.com/changesets/action/issues/147
-          HOME: ${{ github.workspace }}
-          # Allows to download / query / comment packages
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Allows to publish packages
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          # Allows to publish packages
-          BINDING_DIR: ${{ secrets.CHANGESET_TOKEN }}
-          # Support cargo
-          DEBUG: napi:*
-          CARGO_TERM_COLOR: always
-          RUST_BACKTRACE: 1
+
+      - name: Release npm packages
+        run: |
+          pnpm run build:tsc
+          pnpm publish -r --tag ${{ inputs.npm-tag }} --no-git-checks --provenance --access public ${{ inputs.dry-run && '--dry-run' || '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

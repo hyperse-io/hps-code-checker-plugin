@@ -1,5 +1,5 @@
 name: 'Node.js Environment Setup'
-description: 'Setup Node.js environment for building and testing'
+description: 'Setup Node.js + Yarn environment for building and testing'
 
 inputs:
   node-version:
@@ -14,6 +14,16 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
+
+    - name: Ensure Yarn (works on act + GitHub Actions)
+      shell: bash
+      run: |
+        if ! command -v yarn >/dev/null 2>&1; then
+          echo "⚠️ Yarn not found, installing via npm..."
+          npm install -g yarn@4.3.1
+          echo "/usr/local/bin" >> $GITHUB_PATH
+        fi
+        yarn --version
 
     - name: Verify Node.js environment
       shell: bash

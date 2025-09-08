@@ -5,7 +5,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/hyperse-io/hps-code-checker-plugin",
-    "directory": "crates/hps-code-checker-rust"
+    "directory": "crates/binding"
   },
   "author": {
     "name": "Hyperse",
@@ -22,6 +22,7 @@
   "exports": {
     ".": {
       "types": "./index.d.ts",
+      "import": "./index.js",
       "default": "./index.js"
     },
     "./package.json": "./package.json"
@@ -42,7 +43,6 @@
     "@napi-rs/cli": "^3.0.1",
     "@swc/core": "^1.13.5",
     "@types/node": "^24.3.0",
-    "eslint": "^9.34.0",
     "npm-run-all": "^4.1.5",
     "rimraf": "^6.0.1",
     "typescript": "^5.9.2",
@@ -50,18 +50,13 @@
     "vitest": "^3.2.4"
   },
   "napi": {
-    "binaryName": "hps-code-checker-rust",
+    "binaryName": "binding",
     "targets": [
       "aarch64-apple-darwin"
     ]
   },
-  "preferUnplugged": true,
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=8.0.0"
-  },
-  "publishConfig": {
-    "access": "public",
-    "directory": "_release/package"
   }
 }

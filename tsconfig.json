@@ -2,13 +2,16 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "./",
-    "noImplicitAny": false,
+    "jsx": "react-jsx",
     "allowJs": false,
+    "noImplicitAny": true,
     "noEmit": false,
     "incremental": true,
-    "paths": {},
+    "paths": {
+      "@hyperse/hps-code-checker-rust": ["./crates/binding"],
+    },
     "types": ["vitest/globals", "node"]
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "index.js"],
   "exclude": ["**/node_modules", "**/.*/", "dist", "build"]
 }
