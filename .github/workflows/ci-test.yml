@@ -66,9 +66,5 @@ jobs:
         run: pnpm install
 
       - name: Run example - plugin
-        run: node build.js
-        working-directory: examples/use-plugin
-
-      - name: Run example - loader
-        run: node build.js
-        working-directory: examples/use-loader
+        run: pnpm run build:test
+        working-directory: examples/example-rspack
