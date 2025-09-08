@@ -39,7 +39,7 @@ jobs:
 
   release:
     # Basic security: the release job can only be executed from this repo and from the main branch (not a remote thing)
-    if: ${{ github.repository == 'hyperse-io/hps-code-checker-rspack-plugin' && contains('refs/heads/main',github.ref)}}
+    if: ${{ github.repository == 'hyperse-io/hps-code-checker-plugin' && contains('refs/heads/main',github.ref)}}
     runs-on: ubuntu-latest
     environment: npm
     name: Release
@@ -84,6 +84,13 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+
+      # Fix: Resolve disk space error "ENOSPC: no space left on device" on GitHub Actions runners
+      - name: Free disk cache
+        if: ${{ runner.environment == 'github-hosted' && inputs.target == 'x86_64-unknown-linux-gnu' }}
+        uses: xc2/free-disk-space@fbe203b3788f2bebe2c835a15925da303eaa5efe # v1.0.0
+        with:
+          tool-cache: false
 
       - name: Get NAPI info
         id: napi-info
