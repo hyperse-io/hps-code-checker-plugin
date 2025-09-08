@@ -1,6 +1,7 @@
 {
   "name": "@hyperse/example-rspack",
   "version": "0.0.1",
+  "private": true,
   "homepage": "https://github.com/hyperse-io/hps-code-checker-plugin",
   "repository": {
     "type": "git",

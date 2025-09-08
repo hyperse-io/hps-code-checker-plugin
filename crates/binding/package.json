@@ -1,10 +1,10 @@
 {
   "name": "@hyperse/hps-code-checker-rust",
   "homepage": "https://github.com/hyperse-io/hps-code-checker-plugin",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.5",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hyperse-io/hps-code-checker-plugin",
+    "url": "git+https://github.com/hyperse-io/hps-code-checker-plugin.git",
     "directory": "crates/binding"
   },
   "author": {
