@@ -1,9 +1,10 @@
-name: Release
+name: ReleaseOrVersionPR
 
 on:
   push:
     branches:
-      - main
+      - feat/plugin
+      # - main
   workflow_dispatch:
     inputs:
       dry-run:
@@ -39,7 +40,7 @@ jobs:
 
   release:
     # Basic security: the release job can only be executed from this repo and from the main branch (not a remote thing)
-    if: ${{ github.repository == 'hyperse-io/hps-code-checker-rspack-plugin' && contains('refs/heads/main',github.ref)}}
+    # if: ${{ github.repository == 'hyperse-io/hps-code-checker-rspack-plugin' && contains('refs/heads/main',github.ref)}}
     runs-on: ubuntu-latest
     environment: npm
     name: Release
