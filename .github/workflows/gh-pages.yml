@@ -30,15 +30,15 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: 📥 Install Dependencies
-        run: yarn --frozen-lockfile
+        run: pnpm --frozen-lockfile
 
       - name: Unit tests
         run: |
-          yarn test
+          pnpm test
 
       - name: Build
         run: |
-          yarn build:ghpage
+          pnpm build:ghpage
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
