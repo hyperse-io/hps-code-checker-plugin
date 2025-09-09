@@ -1,6 +1,6 @@
 {
   "name": "@hyperse/hps-code-checker-rspack-plugin",
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.1",
   "description": "The HPS Code Checker Plugin.",
   "keywords": [
     "hyperse",
