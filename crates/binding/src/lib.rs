@@ -12,8 +12,6 @@ extern crate rspack_binding_builder;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RspackCodeCheckerPluginOptions {
-  #[serde(default, rename = "excludeModules")]
-  pub exclude_modules: Option<Vec<String>>,
   #[serde(rename = "riskyStringCheck")]
   pub risky_string_check: Vec<String>,
   #[serde(rename = "allowedDomainResources")]
@@ -38,7 +36,6 @@ register_plugin!(
       })?
     } else {
       RspackCodeCheckerPluginOptions {
-        exclude_modules: Some(vec![]),
         risky_string_check: vec![],
         allowed_domain_resources: vec![],
         domain_regex: None,
