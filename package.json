@@ -1,6 +1,6 @@
 {
   "name": "@hyperse/hps-code-checker-rspack-plugin",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.7",
   "description": "The HPS Code Checker Plugin.",
   "keywords": [
     "hyperse",
@@ -24,23 +24,21 @@
     "name": "hyperse net",
     "url": "https://github.com/hyperse-net"
   },
-  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./index.js"
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
     },
     "./package.json": "./package.json"
   },
-  "types": "./dist/index.d.ts",
   "files": [
-    "dist",
-    "index.js"
+    "lib"
   ],
   "scripts": {
     "prepare": "husky",
     "clean:rust": "rimraf crates/binding/npm",
-    "build:tsc": "pnpm run clean:rust && rimraf dist && tsc -p ./tsconfig.build.json",
     "build": "pnpm run --filter @hyperse/hps-code-checker-rust build",
     "lint": "pnpm run lint",
     "typecheck": "pnpm run typecheck",

@@ -1,6 +1,7 @@
 import { lazy, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { strCamelCase, strFormat } from '@dimjs/utils';
+import { getDomain } from '../libs/library02';
 import './main.less';
 
 function Test() {
@@ -34,6 +35,7 @@ function Test() {
       <span>strFormat: {strFormat('12345678901')}</span>
       <button onClick={handleClick}>handleClick</button>
       <span>config: {config?.base}</span>
+      <span>getDomain: {getDomain}</span>
     </div>
   );
 }

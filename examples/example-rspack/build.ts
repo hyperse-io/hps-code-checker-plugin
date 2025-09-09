@@ -14,9 +14,6 @@ export const createRspack = async () => {
     output: {
       path: publicPath,
     },
-    experiments: {
-      css: true,
-    },
     resolve: {
       extensions: ['...', '.ts', '.tsx', '.css', '.less'],
     },
@@ -33,21 +30,38 @@ export const createRspack = async () => {
         },
         {
           test: /\.css$/,
-          use: ['postcss-loader'],
-          type: 'css',
+          use: [
+            {
+              loader: rspack.CssExtractRspackPlugin.loader,
+              options: {
+                // https://github.com/webpack-contrib/mini-css-extract-plugin/releases/tag/v1.0.0
+                // https://github.com/webpack-contrib/css-loader/blob/master/README.md#modules
+                esModule: true,
+              },
+            },
+            {
+              loader: 'css-loader',
+              options: {
+                modules: false,
+              },
+            },
+            'postcss-loader',
+          ],
         },
         {
-          test: /\.less$/,
+          test: /\.less$/i,
           use: [
             {
               loader: 'less-loader',
               options: {
-                // ...
+                sourceMap: false,
+                lessOptions: {
+                  sourceMap: false,
+                  javascriptEnabled: true,
+                },
               },
             },
           ],
-          // 如果你需要将 '*.module.less' 视为 CSS Modules 那么将 'type' 设置为 'css/auto' 否则设置为 'css'
-          type: 'css/auto',
         },
         {
           test: /\.tsx?$/,
@@ -77,15 +91,17 @@ export const createRspack = async () => {
       ],
     },
     plugins: [
+      new rspack.CssExtractRspackPlugin({
+        // Options similar to the same options in webpackOptions.output
+        // both options are optional
+        filename: `[name]`,
+        // the chunkFilename option can be a function for webpack@5
+        chunkFilename: '[id].[contenthash].css',
+      }),
       new RspackCodeCheckerPlugin({
-        excludeModules: [],
         riskyStringCheck: [],
-        allowedDomainResources: [
-          'http://test.example.com',
-          'http://test2.example.com',
-          'https://config.test.com',
-        ],
-        domainRegex: 'https?:\\/\\/',
+        allowedDomainResources: [],
+        domainRegex: 'https?://[a-zA-Z0-9\\.-]+',
       }),
     ],
   };
