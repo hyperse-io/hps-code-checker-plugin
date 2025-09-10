@@ -83,6 +83,9 @@
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   },
+  "resolutions": {
+    "simple-swizzle": "0.2.2"
+  },
   "packageManager": "pnpm@10.15.0",
   "engines": {
     "node": ">=20.0.0",
