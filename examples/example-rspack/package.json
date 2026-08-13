@@ -32,7 +32,7 @@
   ],
   "scripts": {
     "build:test": "node --import @hyperse/ts-node/register ./build.ts",
-    "clean": "rimraf --no-glob ./dist ./_release ./coverage ./tsconfig.tsbuildinfo",
+    "clean": "rimraf --no-glob ./dist ./coverage ./tsconfig.tsbuildinfo",
     "lint": "eslint .",
     "test": "run-s test-unit",
     "test-unit": "vitest run",
@@ -64,7 +64,6 @@
     "node": ">=20.0.0"
   },
   "publishConfig": {
-    "access": "public",
-    "directory": "_release/package"
+    "access": "public"
   }
 }

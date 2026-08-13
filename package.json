@@ -61,8 +61,8 @@
     "@hyperse/hps-code-checker-rust": "workspace:*"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.5.1",
-    "@changesets/cli": "^2.29.6",
+    "@changesets/changelog-github": "^1.0.0",
+    "@changesets/cli": "^3.0.0",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@hyperse/eslint-config-hyperse": "^1.4.7",
@@ -88,7 +88,7 @@
   },
   "packageManager": "pnpm@10.15.0",
   "engines": {
-    "node": ">=20.0.0",
+    "node": ">=22.11.0",
     "yarn": ">=1.22.0",
     "pnpm": ">=10.15.0"
   },

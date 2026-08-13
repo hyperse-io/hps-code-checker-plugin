@@ -28,7 +28,7 @@
   },
   "scripts": {
     "build": "napi build --platform",
-    "clean": "rimraf --no-glob ./dist  ./node_modules ./coverage ./__data__ ./config/__data__ ./_release ./tsconfig.tsbuildinfo",
+    "clean": "rimraf --no-glob ./dist ./node_modules ./coverage ./__data__ ./config/__data__ ./tsconfig.tsbuildinfo",
     "test": "yarn build && run-s test-unit",
     "test-task": "vitest run",
     "test-unit": "vitest run",
